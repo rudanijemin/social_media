@@ -4,6 +4,7 @@ const dbConnect = require('./dbConnect');
 const authRouter = require('./routers/authRouter');
 const morgan = require('morgan');
 const postRouter = require('./routers/postRouter');
+const cookieParser = require('cookie-parser');
 
 
 dotenv.config('./.env');
@@ -15,6 +16,7 @@ app.use(morgan('common'));
 
 app.use('/auth',authRouter);
 app.use('/post',postRouter);
+app.use(cookieParser());
 app.get('/',(req,res)=>{
     res.send("hello")
 })

@@ -89,9 +89,10 @@ const refreshAccessTokenController = async (req, res) => {
 
     }
     const refreshToken =cookies.jwt;
-    if (!refreshToken) {
-        return res.status(401).send("Refresh token is required");
-    }
+    console.log('refresh',refreshTolen);
+    // if (!refreshToken) {
+    //     return res.status(401).send("Refresh token is required");
+    // }
 
     try {
         const decoded = jwt.verify(

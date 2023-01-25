@@ -22,8 +22,8 @@ module.exports = async (req, res, next) => {
         next();
     } catch (error) {
         console.log(error);
-        // return res.status(401).send("Invalid access key");
-        return res.send(error(401,"Invalid access key"))
+        return res.status(401).send("Invalid access key");
+        // return res.send(error(401,"Invalid access key"))
     }
     next();
 };

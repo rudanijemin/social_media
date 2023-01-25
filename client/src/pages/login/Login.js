@@ -1,19 +1,47 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import './Login.scss'
+import {axiosClient} from '../../utils/axiosClient';
+import { KEY_ACCESS_TOKEN, setItem } from "../../utils/localStorageManager";
+
 
 function Login() {
+    const [email,setEmail]=useState('');
+    const[password,setPassword]=useState('');
+    const navigate = useNavigate();
+
+
+    async function handleSubmit(e){
+        e.preventDefautl();
+        try {
+            const result = await axiosClient.post('/auth/login', {
+                email,
+                password
+            });
+            setItem(KEY_ACCESS_TOKEN, result.accessToken);
+            navigate('/');
+            console.log(result);
+        } catch (error) {
+            console.log(error);
+        }
+
+
+    }
+
+
   return (
     <div className="Login">
             <div className="login-box">
                 <h2 className="heading">Login</h2>
-                <form>
+                
+                <form onSubmit={handleSubmit}>
                     <label htmlFor="email">Email</label>
                     <input
                         type="email"
                         className="email"
                         id="email"
-                        // onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
 
                     <label htmlFor="password">Password</label>
@@ -21,7 +49,7 @@ function Login() {
                         type="password"
                         className="password"
                         id="password"
-                        // onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
 
                     <input type="submit" className="submit" />

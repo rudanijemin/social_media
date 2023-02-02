@@ -7,8 +7,8 @@ const { error, success } = require('../utils/responseWrapper');
 const singupController = async (req,res)=>{
     try{
 
-        const {email,password} = req.body;
-        if(!email || !password){
+        const {name,email,password} = req.body;
+        if(!email || !password || !name){
             // return res.status(400).send('all field are required');
             return res.send(error(400,'all field are required'))
         }
@@ -21,6 +21,7 @@ const singupController = async (req,res)=>{
         //user for passwoard hashing
         const hashedPasswoard = await bcrypt.hash(password,10);
         const user = await User.create({
+            name,
             email,
             password:hashedPasswoard
         });
@@ -28,15 +29,13 @@ const singupController = async (req,res)=>{
         // return res.status(201).json({
         //     user,
         // })
-        return res.send(success(201,{
-            user,
-        })
+        return res.send(success(201,'user created  successful ')
         );
 
 
-        res.send('signup')
+        // res.send('signup')
     }catch(e){
-        console.log(e);
+        return res.send(error(500,e.massage))
     }
 }
 
@@ -49,7 +48,7 @@ const loginController = async (req,res)=>{
 
         }
 
-        const user = await User.findOne({email});
+        const user = await User.findOne({email}).select('+password');
         if(!user){
             // return res.status(404).send('user is not register');
             return res.send(error(404,'user is not register'))
@@ -73,9 +72,8 @@ const loginController = async (req,res)=>{
         return res.send(success(200,{accessToken}));
 
 
-        res.send('login')
-    }catch(e){
-        console.log(e);
+     }catch(e){
+        return res.send(error(500,e.massage))
     }
 };
 
@@ -105,13 +103,24 @@ const refreshAccessTokenController = async (req, res) => {
 
         // return res.status(201).json({ accessToken });
         return res.send(success(201,{accessToken}))
-    } catch (error) {
-        console.log(error);
+    } catch (e) {
+        console.log(e);
         // return res.status(401).send("Invalid refresh token");
         return res.send(error(401,"Invalid refresh token"))
 
     }
 };
+const logoutController = async (req, res) => {
+    try {
+        res.clearCookie('jwt', {
+            httpOnly: true,
+            secure: true,
+        })
+        return res.send(success(200, 'user logged out'))
+    } catch (e) {
+        return res.send(error(500, e.message));
+    }
+}
 
 //how to jounreate access token
 //internal function
@@ -119,7 +128,7 @@ const refreshAccessTokenController = async (req, res) => {
 const generateAccessToken = (data)=>{
     try{
         const token= jwt.sign(data,process.env.ACCESS_TOKEN_PRIVATE_KEY,{
-            expiresIn:'15m',
+            expiresIn:'1d',
         });
         console.log(token);
         return token;
@@ -146,5 +155,6 @@ const generateRefreshToken = (data)=>{
 module.exports={
     loginController,
     singupController,
-    refreshAccessTokenController    
+    refreshAccessTokenController,
+    logoutController
 }

@@ -4,6 +4,7 @@ const dbConnect = require('./dbConnect');
 const authRouter = require('./routers/authRouter');
 const morgan = require('morgan');
 const postRouter = require('./routers/postRouter');
+const userRouter = require("./routers/userRouter");
 const cookieParser = require('cookie-parser');
 const cors = require('cors')
 
@@ -17,6 +18,8 @@ app.use(morgan('common'));
 
 app.use('/auth',authRouter);
 app.use('/post',postRouter);
+app.use('/user', userRouter)
+
 app.use(cookieParser());
 app.use(cors({
     Credential:true,

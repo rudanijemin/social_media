@@ -1,5 +1,5 @@
-const mongooes = require("mongoose");
-const userSchema = mongooes.Schema({
+const mongoose = require("mongoose");
+const userSchema = mongoose.Schema({
     email:{
         type:String,
         require:true,
@@ -9,7 +9,33 @@ const userSchema = mongooes.Schema({
     password:{
         type:String,
         require:true
-    }
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    avatar: {
+        publicId: String,
+        url: String
+    },
+    followers: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user'
+        }
+    ],
+    followings: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user'
+        }
+    ],
+    posts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'post'
+        }
+    ]
 })
 
-module.exports=mongooes.model('user',userSchema); 
+module.exports=mongoose.model('user',userSchema); 
